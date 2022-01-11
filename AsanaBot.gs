@@ -4,6 +4,8 @@ var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
 var baseURL = "https://app.asana.com/api/1.0"
 
 var now = new Date();
+// Add one day to exclude tasks that were completed today
+now.setDate(now.getDate() + 1);
 var now_string = now.getFullYear() + "-" + ("0" + (now.getMonth() + 1)).slice(-2) + "-" + ("0" + now.getDate()).slice(-2) + "T" + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
 var now_date_string = now.getFullYear() + "-" + ("0" + (now.getMonth() + 1)).slice(-2) + "-" + ("0" + now.getDate()).slice(-2)
 
@@ -80,8 +82,10 @@ function main() {
   console.log(dueTasks);
 
   // TODO: Make this more dependent on startColumn / startRow variables
-  // Clears max of 45 tasks. I shouldn't have more than that in a day. Doesn't appear to clear the checkboxes though...
+  // Clears max of 45 tasks. I (hopefully) shouldn't have more than that in a day. 
+  sheet.getRange("G5:I50").removeCheckboxes();
   sheet.getRange("G5:I50").clearContent();
+  // sheet.getRange("G5:I50").co
   
   for (const index in dueTasks) {
     sheet.getRange(startRow + parseInt(index), startColumn).insertCheckboxes();
