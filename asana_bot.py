@@ -26,13 +26,19 @@ def get_open_tasks():
     all_tags = get_tags()
 
     open_tasks = []
-    task_result = client.tasks.get_tasks({"assignee": assignee_gid, "workspace": workspace_gid, "completed_since": now}, opt_pretty=True, fields=["name", "tags", "due_on"])
+    task_result = client.tasks.get_tasks({"assignee": assignee_gid, "workspace": workspace_gid, "completed_since": now}, opt_pretty=True, fields=["name", "tags", "due_on", "memberships.section.name"])
     for item in task_result:
         
         # Put English Tag names in tag field instead of GIDs
         item_tags = []
         for tag in item["tags"]:
             item_tags.append(all_tags[tag["gid"]])
+
+        # Get the section name out of the tree (assuming tasks are in 1 or 0 sections)
+        if item["memberships"] == []:
+            item["section"] = "None"
+        else:
+            item["section"] = item["memberships"][0]["section"]["name"]
 
         item["tags"] = item_tags
             
